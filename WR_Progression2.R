@@ -71,9 +71,18 @@ avg_days_stroke_plot = plot_ly(
   data = avg_days_stroke,
   x = ~Stroke,
   y = ~Avg,
-  name = "Average Days Between Wr By Stroke",
-  type = "bar"
-)
+  type = "bar",
+  text = ~Avg
+) %>%
+  layout(
+    title = "Avg Days Passed Between WRs by Stroke",
+    xaxis = list(
+      title = "Stroke"
+    ),
+    yaxis = list(
+      title = "Days"
+    )
+  )
 avg_days_stroke_plot
 
 # by event
@@ -84,7 +93,33 @@ avg_days_event = wr_diff %>%
 avg_days_event$Avg = round(avg_days_event$Avg, 2)
 avg_days_event
 
-# most days passed
+# plot it
+xaxis_order = c("50 Free", "100 Free", "200 Free", "400 Free", "800 Free", "1500 Free",
+                "50 Backstroke", "100 Backstroke", "200 Backstroke",
+                "50 Breaststroke", "100 Breaststroke", "200 Breaststroke",
+                "50 Butterfly", "100 Butterfly", "200 Butterfly",
+                "200 IM", "400 IM")
+avg_days_event_plot = plot_ly(
+  data = avg_days_event,
+  x = ~Event,
+  y = ~Avg,
+  type = "bar",
+  text = ~Avg
+) %>%
+  layout(
+    title = "Avg Days Passed Between WRs by Event",
+    xaxis = list(
+      title = "Event",
+      categoryorder = "array",
+      categoryarray = xaxis_order
+    ),
+    yaxis = list(
+      title = "Days"
+    )
+  )
+avg_days_event_plot
+
+#### most days passed ####
 
 # current longest standing record
 
