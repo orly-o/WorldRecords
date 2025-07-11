@@ -1,5 +1,5 @@
 #### WR Progression ####
-## May 2025 ##
+## July 2025 ##
 
 # housekeeping
 setwd("/Users/orly/Desktop/Swim Stats/WR Progression")
@@ -14,13 +14,7 @@ library(plotly)
 wr = read.csv("WRProgression.csv")
 head(wr)
 
-#### first looks, manipulate as needed ####
-# main descriptive things
-nrow(wr)
-ncol(wr)
-
 # new columns to split up the distance and the stroke
-# gosh i missed piping
 wr = wr %>%
   separate("Event", 
            sep = " ", 
@@ -28,70 +22,80 @@ wr = wr %>%
            remove = FALSE)
 head(wr)
 
-# separate out male and female datasets
-wrm = wr[wr$Sex == "M",]
-wrf = wr[wr$Sex == "F",]
+# format of date column
+class(wr$Date)
+# it says character so we have to do something about that
+head(wr$Date)
+# upon further investigation - we have to note that the dates are also from 1900!
+# the function above assumes it's from 2000
+# might have to make this some manual effort...
+# new column to convert it to date format so we can do calculations
+wr$Date2 = as.Date(wr$Date, format = "%m/%d/%Y")
+head(wr$Date2)
+# test it by calculating time between the dates
+timebetween = wr$Date2[2] - wr$Date2[1]
+timebetween
+# cool!
 
-#### early analysis ####
-# how many swimmers are there?
-males = n_distinct(wrm$Name)
-males
-females = n_distinct(wrf$Name)
-females
+# we are also going to take out "NA" rankings
+wr_sub = wr %>%
+  drop_na(Rank)
 
-# count of WRs by swimmer
-# and graphs! yay graphs!
-# men
-wrcount_m = wrm %>%
-  count(Name, sort = TRUE)
-colnames(wrcount_m) = c("Name", "WR_Count")
-head(wrcount_m, 5)
+# ok now we are ready for some time analysis
 
-# graph it (top 10 maybe)
-wrcount_m_plot = plot_ly(
-  data = wrcount_m %>% slice_max(order_by = WR_Count, n = 20),
-  x = ~Name,
-  y = ~WR_Count,
+#### time between analysis ####
+# calculate days between WRs for each event type
+wr_diff = wr_sub %>%
+  arrange(Event, Date2) %>%
+  group_by(Event, Sex) %>%
+  mutate(DaysPassed = as.numeric(Date2 - lag(Date2))) %>%
+  ungroup()
+head(wr_diff)
+
+# anything with rank 1 should have no days passed
+check_rankings = sum(wr_diff[wr_diff$Rank == 1,]$DaysPassed)
+check_rankings
+# cool
+
+#### average days passed ####
+# by stroke
+avg_days_stroke = wr_diff %>%
+  group_by(Stroke) %>%
+  summarize(Avg = mean(DaysPassed, na.rm = TRUE)) %>%
+  as.data.frame()
+avg_days_stroke$Avg = round(avg_days_stroke$Avg, 2)
+avg_days_stroke
+
+# plot it
+avg_days_stroke_plot = plot_ly(
+  data = avg_days_stroke,
+  x = Stroke,
+  y = Avg,
+  name = "Average Days Between Wr By Stroke",
   type = "bar"
-) %>%
-  layout(
-    title = "Top 20 Swimmers by WR Count (M)",
-    xaxis = list(
-      title = "Swimmer",
-      categoryorder = "total descending"),
-    yaxis = list(
-      title = "WR Count"
-    )
 )
-wrcount_m_plot
+avg_days_stroke_plot
 
-# women
-wrcount_f = wrf %>%
-  count(Name, sort = TRUE)
-colnames(wrcount_f) = c("Name", "WR_Count")
-head(wrcount_f, 5)
+# by event
+avg_days_event = wr_diff %>%
+  group_by(Event) %>%
+  summarize(Avg = mean(DaysPassed, na.rm = TRUE)) %>%
+  as.data.frame()
+avg_days_event$Avg = round(avg_days_event$Avg, 2)
+avg_days_event
 
-wrcount_f_plot = plot_ly(
-  data = wrcount_f %>% slice_max(order_by = WR_Count, n = 20),
-  x = ~Name,
-  y = ~WR_Count,
-  type = "bar"
-) %>%
-  layout(
-    title = "Top 20 Swimmers by WR Count (F)",
-    xaxis = list(
-      title = "Swimmer",
-      categoryorder = "total descending"),
-    yaxis = list(
-      title = "WR Count"
-    )
-  )
-wrcount_f_plot
+# most days passed
 
+# current longest standing record
 
+# least days passed
 
+# current latest world record
 
-
-
+# Katie, Summer, Ariarne - the 400 Freestyle Preview
+# for any stroke/event - total WRs
+# for any stroke/event - average re-breaking (ie, breaking their own record)
+# for 400 fr - who has broken it the most
+# for 400 fr - how much did they break it by
 
 
