@@ -69,8 +69,8 @@ avg_days_stroke
 # plot it
 avg_days_stroke_plot = plot_ly(
   data = avg_days_stroke,
-  x = Stroke,
-  y = Avg,
+  x = ~Stroke,
+  y = ~Avg,
   name = "Average Days Between Wr By Stroke",
   type = "bar"
 )
