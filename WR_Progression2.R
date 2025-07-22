@@ -121,14 +121,39 @@ avg_days_event_plot
 
 #### most days passed ####
 
-# current longest standing record
+## longest time passed before breaking a record
+longest_record = wr_diff %>%
+  filter(!is.na(DaysPassed)) %>% 
+  slice_max(DaysPassed, n = 1)
+longest_record
 
+## WRs that have most days and least days since previous one
+# take last ranking instance of each event
 
-# least days passed
+# this didn't work at first because the rank column is a character
+# let's make a new column to change to numbers, ignoring NAs (don't need the first instance)
+wr_diff$Rank2 = as.numeric(na.omit(wr_diff$Rank))
 
-# current latest world record
+# switch in the new Rank column
+latest_event = wr_diff %>%
+  # filter(!is.na(Rank2)) %>%
+  group_by(Event, Sex) %>%
+  filter(Rank2 == max(Rank2)) %>%
+  ungroup()
 
-# Katie, Summer, Ariarne - the 400 Freestyle Preview
+# pull record that was recently broken longest after previous one
+recent_longest = latest_event %>%
+  filter(DaysPassed == max(DaysPassed))
+View(recent_longest)
+
+# pull record that was recently broken closest after previous one
+recent_shortest = latest_event %>%
+  filter(DaysPassed == min(DaysPassed))
+View(recent_shortest)
+# so these were set 0 days later which means it was the same day
+# either in finals after prelims or semifinals after prelims
+
+## Katie, Summer, Ariarne - the 400 Freestyle Preview
 # for any stroke/event - total WRs
 # for any stroke/event - average re-breaking (ie, breaking their own record)
 # for 400 fr - who has broken it the most
