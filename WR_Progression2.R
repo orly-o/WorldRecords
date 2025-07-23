@@ -93,6 +93,8 @@ avg_days_stroke_plot = plot_ly(
 avg_days_stroke_plot
 
 # break it up by sex
+
+## tried this with both together but decided to do one at a time
 # avg_days_stroke_sex = wr_diff %>%
 #   group_by(Stroke, Sex) %>%
 #   summarise(Avg_Days = round(mean(DaysPassed, na.rm = TRUE), 2), 
@@ -112,6 +114,9 @@ avg_days_stroke_F = wr_diff %>%
 avg_days_stroke_F$Avg = round(avg_days_stroke_F$Avg, 2)
 avg_days_stroke_F
 
+stroke_colors_F = ifelse(avg_days_stroke_F$Stroke == "Free", "#28BB8E", "#0284c7")
+stroke_text_F = ifelse(avg_days_stroke_F$Stroke == "Free", avg_days_stroke_F$Avg, "")
+
 avg_days_stroke_M = wr_diff %>%
   filter(Sex == "M") %>%
   group_by(Stroke) %>%
@@ -120,7 +125,56 @@ avg_days_stroke_M = wr_diff %>%
 avg_days_stroke_M$Avg = round(avg_days_stroke_M$Avg, 2)
 avg_days_stroke_M
 
-# # plot it
+stroke_colors_M = ifelse(avg_days_stroke_M$Stroke == "Free", "#28BB8E", "#0284c7")
+stroke_text_M = ifelse(avg_days_stroke_M$Stroke == "Free", avg_days_stroke_M$Avg, "")
+
+## plot it
+# female
+avg_days_stroke_F_plot = plot_ly(
+  data = avg_days_stroke_F,
+  x = ~Stroke,
+  y = ~Avg,
+  type = "bar",
+  text = stroke_text_F,
+  marker = list(
+    color = stroke_colors_F
+  )
+) %>%
+  layout(
+    title = "Avg Days Passed Between WRs by Stroke (Females)",
+    xaxis = list(
+      title = "Stroke"
+    ),
+    yaxis = list(
+      title = "Days"
+    )
+  )
+avg_days_stroke_F_plot
+
+# male
+avg_days_stroke_M_plot = plot_ly(
+  data = avg_days_stroke_M,
+  x = ~Stroke,
+  y = ~Avg,
+  type = "bar",
+  text = stroke_text_M,
+  marker = list(
+    color = stroke_colors_M
+  )
+) %>%
+  layout(
+    title = "Avg Days Passed Between WRs by Stroke (Males)",
+    xaxis = list(
+      title = "Stroke"
+    ),
+    yaxis = list(
+      title = "Days"
+    )
+  )
+avg_days_stroke_M_plot
+
+## this is for dataset that is both sexes together but i wanted to color code the highest one
+## so this is commented out cuz it is great code - humbly :) 
 # stroke_colors_F = ifelse(avg_days_stroke_sex$Stroke == "Free", "#28BB8E", "#0284c7")
 # stroke_colors_M = ifelse(avg_days_stroke_sex$Stroke == "Free", "#E5E4E5", "#014F86")
 # stroke_text_F = ifelse(avg_days_stroke_sex$Stroke == "Free", avg_days_stroke_sex$Avg_F, "")
