@@ -66,6 +66,34 @@ avg_days_stroke = wr_diff %>%
 avg_days_stroke$Avg = round(avg_days_stroke$Avg, 2)
 avg_days_stroke
 
+# break it up by sex
+avg_days_stroke_sex = wr_diff %>%
+  group_by(Stroke, Sex) %>%
+  summarise(Avg_Days = round(mean(DaysPassed, na.rm = TRUE), 2), 
+            .groups = "drop") %>%
+  pivot_wider(
+    names_from = Sex,
+    values_from = Avg_Days,
+    names_prefix = "Avg_"
+  )
+avg_days_stroke_sex
+
+avg_days_stroke_F = wr_diff %>%
+  filter(Sex == "F") %>%
+  group_by(Stroke) %>%
+  summarize(Avg = mean(DaysPassed, na.rm = TRUE)) %>%
+  as.data.frame()
+avg_days_stroke_F$Avg = round(avg_days_stroke_F$Avg, 2)
+avg_days_stroke_F
+
+avg_days_stroke_M = wr_diff %>%
+  filter(Sex == "M") %>%
+  group_by(Stroke) %>%
+  summarize(Avg = mean(DaysPassed, na.rm = TRUE)) %>%
+  as.data.frame()
+avg_days_stroke_M$Avg = round(avg_days_stroke_M$Avg, 2)
+avg_days_stroke_M
+
 # plot it
 # different color for the highest one
 stroke_colors = ifelse(avg_days_stroke$Stroke == "Free", "#28BB8E", "#0284c7")
@@ -91,6 +119,8 @@ avg_days_stroke_plot = plot_ly(
     )
   )
 avg_days_stroke_plot
+
+# make a plot with both sexes, green for highest
 
 # by event
 avg_days_event = wr_diff %>%
