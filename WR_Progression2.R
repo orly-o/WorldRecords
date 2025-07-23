@@ -67,12 +67,19 @@ avg_days_stroke$Avg = round(avg_days_stroke$Avg, 2)
 avg_days_stroke
 
 # plot it
+# different color for the highest one
+stroke_colors = ifelse(avg_days_stroke$Stroke == "Free", "#28BB8E", "#0284c7")
+stroke_text = ifelse(avg_days_stroke$Stroke == "Free", avg_days_stroke$Avg, "")
+
 avg_days_stroke_plot = plot_ly(
   data = avg_days_stroke,
   x = ~Stroke,
   y = ~Avg,
   type = "bar",
-  text = ~Avg
+  text = stroke_text,
+  marker = list(
+    color = stroke_colors
+  )
 ) %>%
   layout(
     title = "Avg Days Passed Between WRs by Stroke",
@@ -94,17 +101,24 @@ avg_days_event$Avg = round(avg_days_event$Avg, 2)
 avg_days_event
 
 # plot it
+# set the axis order
 xaxis_order = c("50 Free", "100 Free", "200 Free", "400 Free", "800 Free", "1500 Free",
                 "50 Backstroke", "100 Backstroke", "200 Backstroke",
                 "50 Breaststroke", "100 Breaststroke", "200 Breaststroke",
                 "50 Butterfly", "100 Butterfly", "200 Butterfly",
                 "200 IM", "400 IM")
+event_colors = ifelse(avg_days_event$Event == "1500 Free", "#28BB8E", "#0284c7")
+event_text = ifelse(avg_days_event$Event == "1500 Free", avg_days_event$Avg, "")
+
 avg_days_event_plot = plot_ly(
   data = avg_days_event,
   x = ~Event,
   y = ~Avg,
   type = "bar",
-  text = ~Avg
+  text = event_text,
+  marker = list(
+    color = event_colors
+  )
 ) %>%
   layout(
     title = "Avg Days Passed Between WRs by Event",
@@ -119,6 +133,24 @@ avg_days_event_plot = plot_ly(
   )
 avg_days_event_plot
 
+# what about just for the women's 400 Free? profile of days passed
+days_passed_400FrW_min = wr_diff %>%
+  filter(Event == "400 Free", Sex == "F") %>%
+  filter(DaysPassed == min(DaysPassed, na.rm = TRUE))
+
+days_passed_400FrW_max = wr_diff %>%
+  filter(Event == "400 Free", Sex == "F") %>%
+  filter(DaysPassed == max(DaysPassed, na.rm = TRUE))
+
+days_passed_400FrW_avg = wr_diff %>%
+  filter(Event == "400 Free", Sex == "F") %>%
+  summarize(DaysPassed = mean(DaysPassed, na.rm = TRUE))
+
+days_passed_400FrW_min
+days_passed_400FrW_max
+days_passed_400FrW_avg
+
+
 #### most days passed ####
 
 ## longest time passed before breaking a record
@@ -129,7 +161,6 @@ longest_record
 
 ## WRs that have most days and least days since previous one
 # take last ranking instance of each event
-
 # this didn't work at first because the rank column is a character
 # let's make a new column to change to numbers, ignoring NAs (don't need the first instance)
 wr_diff$Rank2 = as.numeric(na.omit(wr_diff$Rank))
