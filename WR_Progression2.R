@@ -265,9 +265,17 @@ days_passed_400FrW_avg = wr_diff %>%
   filter(Event == "400 Free", Sex == "F") %>%
   summarize(DaysPassed = mean(DaysPassed, na.rm = TRUE))
 
-days_passed_400FrW_min
-days_passed_400FrW_max
+View(days_passed_400FrW_min)
+View(days_passed_400FrW_max)
 days_passed_400FrW_avg
+
+## 400 free since the tech suit breaking by Ledecky
+womens400Free = wr_diff %>%
+  filter(Event == "400 Free") %>%
+  filter(Date2 > "2010-01-01") %>%
+  filter(Sex == "F") %>%
+  select(Rank, Time, Name, Nationality, Meet, Date, DaysPassed)
+womens400Free
 
 
 #### most days passed ####
@@ -276,7 +284,18 @@ days_passed_400FrW_avg
 longest_record = wr_diff %>%
   filter(!is.na(DaysPassed)) %>% 
   slice_max(DaysPassed, n = 1)
-longest_record
+View(longest_record)
+
+## shortest time passed
+shortest_record = wr_diff %>%
+  filter(!is.na(DaysPassed)) %>%
+  slice_min(DaysPassed)
+View(shortest_record)
+
+# same thing a different way
+shortest_record2 = wr_diff %>%
+  filter(DaysPassed == 0)
+View(shortest_record2)
 
 ## WRs that have most days and least days since previous one
 # take last ranking instance of each event
@@ -286,7 +305,6 @@ wr_diff$Rank2 = as.numeric(na.omit(wr_diff$Rank))
 
 # switch in the new Rank column
 latest_event = wr_diff %>%
-  # filter(!is.na(Rank2)) %>%
   group_by(Event, Sex) %>%
   filter(Rank2 == max(Rank2)) %>%
   ungroup()
