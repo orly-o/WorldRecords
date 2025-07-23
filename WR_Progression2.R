@@ -58,41 +58,13 @@ check_rankings
 # cool
 
 #### average days passed ####
-# by stroke
+## by stroke
 avg_days_stroke = wr_diff %>%
   group_by(Stroke) %>%
   summarize(Avg = mean(DaysPassed, na.rm = TRUE)) %>%
   as.data.frame()
 avg_days_stroke$Avg = round(avg_days_stroke$Avg, 2)
 avg_days_stroke
-
-# break it up by sex
-avg_days_stroke_sex = wr_diff %>%
-  group_by(Stroke, Sex) %>%
-  summarise(Avg_Days = round(mean(DaysPassed, na.rm = TRUE), 2), 
-            .groups = "drop") %>%
-  pivot_wider(
-    names_from = Sex,
-    values_from = Avg_Days,
-    names_prefix = "Avg_"
-  )
-avg_days_stroke_sex
-
-avg_days_stroke_F = wr_diff %>%
-  filter(Sex == "F") %>%
-  group_by(Stroke) %>%
-  summarize(Avg = mean(DaysPassed, na.rm = TRUE)) %>%
-  as.data.frame()
-avg_days_stroke_F$Avg = round(avg_days_stroke_F$Avg, 2)
-avg_days_stroke_F
-
-avg_days_stroke_M = wr_diff %>%
-  filter(Sex == "M") %>%
-  group_by(Stroke) %>%
-  summarize(Avg = mean(DaysPassed, na.rm = TRUE)) %>%
-  as.data.frame()
-avg_days_stroke_M$Avg = round(avg_days_stroke_M$Avg, 2)
-avg_days_stroke_M
 
 # plot it
 # different color for the highest one
@@ -120,9 +92,72 @@ avg_days_stroke_plot = plot_ly(
   )
 avg_days_stroke_plot
 
-# make a plot with both sexes, green for highest
+# break it up by sex
+# avg_days_stroke_sex = wr_diff %>%
+#   group_by(Stroke, Sex) %>%
+#   summarise(Avg_Days = round(mean(DaysPassed, na.rm = TRUE), 2), 
+#             .groups = "drop") %>%
+#   pivot_wider(
+#     names_from = Sex,
+#     values_from = Avg_Days,
+#     names_prefix = "Avg_"
+#   )
+# avg_days_stroke_sex
 
-# by event
+avg_days_stroke_F = wr_diff %>%
+  filter(Sex == "F") %>%
+  group_by(Stroke) %>%
+  summarize(Avg = mean(DaysPassed, na.rm = TRUE)) %>%
+  as.data.frame()
+avg_days_stroke_F$Avg = round(avg_days_stroke_F$Avg, 2)
+avg_days_stroke_F
+
+avg_days_stroke_M = wr_diff %>%
+  filter(Sex == "M") %>%
+  group_by(Stroke) %>%
+  summarize(Avg = mean(DaysPassed, na.rm = TRUE)) %>%
+  as.data.frame()
+avg_days_stroke_M$Avg = round(avg_days_stroke_M$Avg, 2)
+avg_days_stroke_M
+
+# # plot it
+# stroke_colors_F = ifelse(avg_days_stroke_sex$Stroke == "Free", "#28BB8E", "#0284c7")
+# stroke_colors_M = ifelse(avg_days_stroke_sex$Stroke == "Free", "#E5E4E5", "#014F86")
+# stroke_text_F = ifelse(avg_days_stroke_sex$Stroke == "Free", avg_days_stroke_sex$Avg_F, "")
+# stroke_text_M = ifelse(avg_days_stroke_sex$Stroke == "Free", avg_days_stroke_sex$Avg_M, "")
+# 
+# avg_days_stroke_sex_plot = plot_ly(
+#   data = avg_days_stroke_sex,
+#   x = ~Stroke,
+#   y = ~Avg_F,
+#   type = "bar",
+#   text = stroke_text_F,
+#   marker = list(
+#     color = stroke_colors_F
+#   ),
+#   name = "Female"
+# ) %>%
+#   add_trace(
+#     y = ~Avg_M,
+#     marker = list(
+#       color = stroke_colors_M
+#     ),
+#     text = stroke_text_M,
+#     name = "Male"
+#   ) %>%
+#   layout(
+#     title = "Avg Days Passed Between WRs by Stroke and Sex",
+#     xaxis = list(
+#       title = "Stroke"
+#     ),
+#     yaxis = list(
+#       title = "Days"
+#     ),
+#     showlegend = TRUE
+#   )
+# avg_days_stroke_sex_plot
+
+## by event
 avg_days_event = wr_diff %>%
   group_by(Event) %>%
   summarize(Avg = mean(DaysPassed, na.rm = TRUE)) %>%
