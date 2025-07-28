@@ -2,16 +2,26 @@
 title: "WR_Exploration_2.5"
 author: "Orly Olbum"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r libraries}
+library(dplyr)
+library(tidyr)
+library(lubridate)
+library(plotly)
+```
+
 ## Data Prep
 
 ```{r data load}
-setwd("/Users/orly/Desktop/Swim Stats/WR Progression")
+# setwd("/Users/orly/Desktop/Swim Stats/WR Progression")
+setwd("/Users/orly/Library/CloudStorage/OneDrive-Personal/Swim Stats/WR Progression")
 wr = read.csv("WRProgression.csv")
 head(wr)
 ```
@@ -24,11 +34,21 @@ wr = wr %>%
            into = c("Distance", "Stroke"), 
            remove = FALSE)
 
+# new column to convert it to date format so we can do calculations
+wr$Date2 = as.Date(wr$Date, format = "%m/%d/%Y")
+
+# we are also going to take out "NA" rankings
+wr_sub = wr %>%
+  drop_na(Rank)
 ```
 
-```{r libraries}
-
-
+```{r DaysPassed}
+# calculate days between WRs for each event type
+wr_diff = wr_sub %>%
+  arrange(Event, Date2) %>%
+  group_by(Event, Sex) %>%
+  mutate(DaysPassed = as.numeric(Date2 - lag(Date2))) %>%
+  ungroup()
 ```
 
 
@@ -40,3 +60,5 @@ Katie, Summer, Ariarne - the 400 Freestyle Preview
 - for any stroke/event - average re-breaking (ie, breaking their own record)
 - for 400 fr - who has broken it the most
 - for 400 fr - how much did they break it by
+
+
