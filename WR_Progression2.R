@@ -323,6 +323,7 @@ View(recent_shortest)
 
 ## Katie, Summer, Ariarne - the 400 Freestyle Preview
 # for any stroke/event - total WRs
+# for any WRs - timeline of WRs (and what meet was it at)
 # for any stroke/event - average re-breaking (ie, breaking their own record)
 # for 400 fr - who has broken it the most
 # for 400 fr - how much did they break it by
