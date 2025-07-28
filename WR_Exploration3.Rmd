@@ -1,0 +1,42 @@
+---
+title: "WR_Exploration_2.5"
+author: "Orly Olbum"
+output: html_document
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Data Prep
+
+```{r data load}
+setwd("/Users/orly/Desktop/Swim Stats/WR Progression")
+wr = read.csv("WRProgression.csv")
+head(wr)
+```
+
+```{r data setup}
+# new columns to split up the distance and the stroke
+wr = wr %>%
+  separate("Event", 
+           sep = " ", 
+           into = c("Distance", "Stroke"), 
+           remove = FALSE)
+
+```
+
+```{r libraries}
+
+
+```
+
+
+## Ideas
+
+Katie, Summer, Ariarne - the 400 Freestyle Preview
+- for any stroke/event - total WRs
+- for any WRs - timeline of WRs (and what meet was it at)
+- for any stroke/event - average re-breaking (ie, breaking their own record)
+- for 400 fr - who has broken it the most
+- for 400 fr - how much did they break it by
