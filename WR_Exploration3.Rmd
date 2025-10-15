@@ -1,5 +1,5 @@
 ---
-title: "WR_Exploration_2.5"
+title: "WR_Exploration_3"
 author: "Orly Olbum"
 output: html_document
 editor_options: 
@@ -22,29 +22,34 @@ library(plotly)
 ```{r data load}
 # setwd("/Users/orly/Desktop/Swim Stats/WR Progression")
 setwd("/Users/orly/Library/CloudStorage/OneDrive-Personal/Swim Stats/WR Progression")
-wr = read.csv("WRProgression.csv")
-head(wr)
+wr_og = read.csv("WRProgression.csv")
+head(wr_og)
 ```
 
 ```{r data setup}
 # new columns to split up the distance and the stroke
-wr = wr %>%
+wr_og = wr_og %>%
   separate("Event", 
            sep = " ", 
            into = c("Distance", "Stroke"), 
            remove = FALSE)
+```
 
+```{r setup 2}
 # new column to convert it to date format so we can do calculations
-wr$Date2 = as.Date(wr$Date, format = "%m/%d/%Y")
+wr_og$Date2 = as.Date(wr_og$Date, format = "%m/%d/%Y")
 
+```
+
+```{r setup 3}
 # we are also going to take out "NA" rankings
-wr_sub = wr %>%
+wr_sub = wr_og %>%
   drop_na(Rank)
 ```
 
 ```{r DaysPassed}
 # calculate days between WRs for each event type
-wr_diff = wr_sub %>%
+wr = wr_sub %>%
   arrange(Event, Date2) %>%
   group_by(Event, Sex) %>%
   mutate(DaysPassed = as.numeric(Date2 - lag(Date2))) %>%
@@ -52,13 +57,35 @@ wr_diff = wr_sub %>%
 ```
 
 
-## Ideas
+## Fast Ladies
+Exploring Mary T Meagher, Tracy Caulkins, and Janet Evans
+Define their greatness!
+- Count of WRs
+- Count of Events
+- Time period of WRs (from first date of breaking to breaking of their's by someone else for the last time)
 
-Katie, Summer, Ariarne - the 400 Freestyle Preview
-- for any stroke/event - total WRs
-- for any WRs - timeline of WRs (and what meet was it at)
-- for any stroke/event - average re-breaking (ie, breaking their own record)
-- for 400 fr - who has broken it the most
-- for 400 fr - how much did they break it by
 
+# Mary T
+
+```{r Mary T}
+## count of WRs
+wr_MaryT = wr %>%
+  filter(Name == "Mary T. Meagher")
+print(wr_MaryT)
+count_wr_MaryT = nrow(wr_MaryT)
+
+## count how many different events
+events_MaryT = unique(wr_MaryT$Event)
+length(events_MaryT)
+
+## how long did she hold any WRs
+# first WR
+firstwr_MaryT = wr_MaryT[which.min(wr_MaryT$Date2), ]
+View(firstwr_MaryT)
+
+# last WR
+lastwr_MaryT = wr_MaryT[which.min(wr_MaryT$Date2)]
+
+# last WR broken
+```
 
