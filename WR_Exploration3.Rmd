@@ -37,8 +37,7 @@ wr_og = wr_og %>%
 
 ```{r setup 2}
 # new column to convert it to date format so we can do calculations
-wr_og$Date2 = as.Date(wr_og$Date, format = "%m/%d/%Y")
-
+wr_og$Date2 = mdy(wr_og$Date)
 ```
 
 ```{r setup 3}
@@ -64,15 +63,15 @@ Define their greatness!
 - Count of Events
 - Time period of WRs (from first date of breaking to breaking of their's by someone else for the last time)
 
-
 # Mary T
 
 ```{r Mary T}
 ## count of WRs
 wr_MaryT = wr %>%
   filter(Name == "Mary T. Meagher")
-print(wr_MaryT)
+# print(wr_MaryT)
 count_wr_MaryT = nrow(wr_MaryT)
+count_wr_MaryT
 
 ## count how many different events
 events_MaryT = unique(wr_MaryT$Event)
@@ -81,11 +80,81 @@ length(events_MaryT)
 ## how long did she hold any WRs
 # first WR
 firstwr_MaryT = wr_MaryT[which.min(wr_MaryT$Date2), ]
-View(firstwr_MaryT)
+firstwr_MaryT %>%
+  select(Rank, Event, Time, Name, Nationality, Date, Meet, Location)
 
 # last WR
-lastwr_MaryT = wr_MaryT[which.min(wr_MaryT$Date2)]
+lastwr_MaryT = wr_MaryT[which.max(wr_MaryT$Date2), ]
+lastwr_MaryT %>%
+  select(Rank, Event, Time, Name, Nationality, Date, Meet, Location)
 
 # last WR broken
+# we can see that the last record she set was the 27th ranked 100 fly, so we need the next rank
+# let's try to do this without doing it manually
+
+# filter by event, sex, and rank + 1 from previous dataset - then pull out date
+end_MaryT = wr %>%
+  filter(
+    Event == lastwr_MaryT$Event,
+    Sex == lastwr_MaryT$Sex,
+    Rank == as.numeric(lastwr_MaryT$Rank) + 1
+  )
+end_MaryT %>%
+  select(Rank, Event, Time, Name, Nationality, Date, Meet, Location)
+
+# take date from that, find days between last date and first date
+end_MaryT_date = end_MaryT$Date2
+start_MaryT_date = firstwr_MaryT$Date2
+MaryT_reign = difftime(end_MaryT_date, start_MaryT_date)
+MaryT_reign # auto shows days
+time_length(MaryT_reign, unit = "year") # shows years
+```
+
+
+# Tracy C
+
+```{r Tracy C}
+## count of WRs
+wr_TracyC = wr %>%
+  filter(Name == "Tracy Caulkins")
+# print(wr_MaryT)
+count_wr_TracyC = nrow(wr_TracyC)
+count_wr_TracyC
+
+## count how many different events
+events_ = unique(wr_MaryT$Event)
+length(events_TracyC)
+
+## how long did she hold any WRs
+# first WR
+firstwr_MaryT = wr_MaryT[which.min(wr_MaryT$Date2), ]
+firstwr_MaryT %>%
+  select(Rank, Event, Time, Name, Nationality, Date, Meet, Location)
+
+# last WR
+lastwr_MaryT = wr_MaryT[which.max(wr_MaryT$Date2), ]
+lastwr_MaryT %>%
+  select(Rank, Event, Time, Name, Nationality, Date, Meet, Location)
+
+# last WR broken
+# we can see that the last record she set was the 27th ranked 100 fly, so we need the next rank
+# let's try to do this without doing it manually
+
+# filter by event, sex, and rank + 1 from previous dataset - then pull out date
+end_MaryT = wr %>%
+  filter(
+    Event == lastwr_MaryT$Event,
+    Sex == lastwr_MaryT$Sex,
+    Rank == as.numeric(lastwr_MaryT$Rank) + 1
+  )
+end_MaryT %>%
+  select(Rank, Event, Time, Name, Nationality, Date, Meet, Location)
+
+# take date from that, find days between last date and first date
+end_MaryT_date = end_MaryT$Date2
+start_MaryT_date = firstwr_MaryT$Date2
+MaryT_reign = difftime(end_MaryT_date, start_MaryT_date)
+MaryT_reign # auto shows days
+time_length(MaryT_reign, unit = "year") # shows years
 ```
 
