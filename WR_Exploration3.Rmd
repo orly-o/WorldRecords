@@ -92,6 +92,13 @@ lastwr_MaryT %>%
 # we can see that the last record she set was the 27th ranked 100 fly, so we need the next rank
 # let's try to do this without doing it manually
 
+# i tried doing this from the lastwr but that is not necessarily accurate - am i looking for the most recent one, or am i looking for when they no longer held a record?
+# the second option is trickier... i think
+# let's do this - for all wr's she eld, which one did she hold the longest?
+
+# i'll tackle the other one later
+# for lastwr she set, take the date
+
 # filter by event, sex, and rank + 1 from previous dataset - then pull out date
 end_MaryT = wr %>%
   filter(
@@ -122,6 +129,7 @@ count_wr_TracyC
 
 ## count how many different events
 events_TracyC = unique(wr_TracyC$Event)
+events_TracyC
 length(events_TracyC)
 
 ## how long did she hold any WRs
@@ -166,6 +174,7 @@ count_wr_JanetE
 
 ## count how many different events
 events_JanetE = unique(wr_JanetE$Event)
+events_JanetE
 length(events_JanetE)
 
 ## how long did she hold any WRs
