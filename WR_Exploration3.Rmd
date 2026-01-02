@@ -26,7 +26,7 @@ wr_og = read.csv("WRProgression.csv")
 head(wr_og)
 ```
 
-```{r data setup}
+```{r data setup split distance and stroke}
 # new columns to split up the distance and the stroke
 wr_og = wr_og %>%
   separate("Event", 
@@ -35,15 +35,27 @@ wr_og = wr_og %>%
            remove = FALSE)
 ```
 
-```{r setup 2}
+```{r setup 2 convert dates}
 # new column to convert it to date format so we can do calculations
 wr_og$Date2 = mdy(wr_og$Date)
 ```
 
-```{r setup 3}
+```{r setup 3 drop NA ranks}
 # we are also going to take out "NA" rankings
 wr_sub = wr_og %>%
   drop_na(Rank)
+```
+
+```{r setup 4 format times}
+wr = wr %>%
+  mutate(
+    # Convert to a formal duration
+    duration = duration(Time, units = "seconds"),
+    # Format as a string
+    PrettyTime = format(as.POSIXct(as.numeric(duration),
+                                   origin = "1970-01-01", tz = "UTC"),
+                        "%M:%OS2")
+  )
 ```
 
 ```{r DaysPassed}
@@ -206,4 +218,150 @@ JanetE_reign = difftime(end_JanetE_date, start_JanetE_date)
 JanetE_reign # auto shows days
 time_length(JanetE_reign, unit = "year") # shows years
 ```
+
+Let's plot the times for the dominant events of these ladies.
+
+First, let's prep to plot by formatting the seconds so we can show time in a prettier way.
+
+```{r time prep}
+# function to format the seconds
+format_swim = function(seconds) {
+  
+  mins = floor(seconds / 60)
+  secs = seconds %% 60
+  # return differently based on if under or over a minute
+  ifelse(mins > 0,
+         sprintf("%d:%05.2f", mins, secs),
+         sprintf("%.2f", secs))
+}
+```
+
+```{r W 100 Fly - Mary T}
+# subset of data for just W 100 Fly
+wr_W100Fly = wr[(wr$Event == "100 Butterfly" & wr$Sex == "F"),]
+
+# change color for Mary
+marker_colors_100Fly = ifelse(wr_W100Fly$Name == "Mary T. Meagher", "red", "gray")
+marker_size_100Fly = ifelse(wr_W100Fly$Name == "Mary T. Meagher", 24, 8)
+
+# create the ticks
+y_breaks_100Fly = seq(floor(min(wr_W100Fly$Time)), ceiling(max(wr_W100Fly$Time)), by = 2)
+y_labels_100Fly = format_swim(y_breaks_100Fly)
+
+# plot
+fly100 = plot_ly(
+  data = wr_W100Fly,
+  x = ~Date2,
+  y = ~Time,
+  type = 'scatter',
+  mode = 'markers+lines',
+  marker = list(
+    size = marker_size_100Fly,
+    color = marker_colors_100Fly
+  ),
+  line = list(
+    color = 'gray'
+  )
+) %>%
+  layout(
+    title = "Women's 100 Butterfly WR Progression",
+    xaxis = list(
+      title = "Date"
+    ),
+    yaxis = list(
+      title = "Time (mm:ss)",
+      tickvals = y_breaks_100Fly,
+      ticktext = y_labels_100Fly
+    )
+  )
+fly100
+```
+
+
+```{r W 200 IM - Tracy}
+# subset of data for just W 200 IM
+wr_W200IM = wr[(wr$Event == "200 IM" & wr$Sex == "F"),]
+
+# change color for Mary
+marker_colors_200IM = ifelse(wr_W200IM$Name == "Tracy Caulkins", "green", "gray")
+marker_size_200IM = ifelse(wr_W200IM$Name == "Tracy Caulkins", 24, 8)
+
+# create the ticks
+y_breaks_200IM = seq(floor(min(wr_W200IM$Time)), ceiling(max(wr_W200IM$Time)), by = 5)
+y_labels_200IM = format_swim(y_breaks_200IM)
+
+# plot
+im200 = plot_ly(
+  data = wr_W200IM,
+  x = ~Date2,
+  y = ~Time,
+  type = 'scatter',
+  mode = 'markers+lines',
+  marker = list(
+    size = marker_size_200IM,
+    color = marker_colors_200IM
+  ),
+  line = list(
+    color = 'gray'
+  )
+) %>%
+  layout(
+    title = "Women's 200 IM WR Progression",
+    xaxis = list(
+      title = "Date"
+    ),
+    yaxis = list(
+      title = "Time (mm:ss)",
+      tickvals = y_breaks_200IM,
+      ticktext = y_labels_200IM
+    )
+  )
+im200
+```
+
+
+```{r W 800 Free - Janet}
+# subset of data for just W 800 Free
+wr_W800FR = wr[(wr$Event == "800 Free" & wr$Sex == "F"),]
+
+# change color for Mary
+marker_colors_800FR = ifelse(wr_W800FR$Name == "Janet Evans", "purple", "gray")
+marker_size_800FR = ifelse(wr_W800FR$Name == "Janet Evans", 24, 8)
+
+# create the ticks
+y_breaks_800FR = seq(floor(min(wr_W800FR$Time)), ceiling(max(wr_W800FR$Time)), by = 30)
+y_labels_800FR = format_swim(y_breaks_800FR)
+
+# plot
+free800 = plot_ly(
+  data = wr_W800FR,
+  x = ~Date2,
+  y = ~Time,
+  type = 'scatter',
+  mode = 'markers+lines',
+  marker = list(
+    size = marker_size_800FR,
+    color = marker_colors_800FR
+  ),
+  line = list(
+    color = 'gray'
+  )
+) %>%
+  layout(
+    title = "Women's 800 Free WR Progression",
+    xaxis = list(
+      title = "Date"
+    ),
+    yaxis = list(
+      title = "Time (mm:ss)",
+      tickvals = y_breaks_800FR,
+      ticktext = y_labels_800FR
+    )
+  )
+free800
+```
+
+
+
+
 
